@@ -1,12 +1,30 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator, HttpUrl
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Any, Optional
 
 
+class NVDInfoFlattened(BaseModel):
+    cve_id: str
+    base_score: float
+    severity: str
+    description: str
+    reporting_cna: str
+    nist_cna: Optional[bool] = False
+    nist_score: Optional[float] = 0.0
+    date_published: datetime
+    date_last_modified: datetime
+    cve_tags: Optional[List[str]] = None
+    vendor_advisories: Optional[List[HttpUrl]] = None
+    patches: Optional[List[HttpUrl]] = None
+
+
+# heavy edits needed later
+# define ultimate dataclass to hold all information from all sources
+# commenting out for now until final shape is worked out
+"""
 @dataclass
 class NVDInfo:
-    """child class for info specific to NVD"""
 
     url: str
     published_date: Optional[str] = None
@@ -20,13 +38,14 @@ class NVDInfo:
 
 @dataclass
 class CVE:
-    """parent class to hold all parsed information"""
 
     cve_id: str
     description: str
     nvd: NVDInfo
+"""
 
-
+# probably discarding this later - changing to pydantic model_validator
+"""
 class CVSS40Metric(BaseModel):
     # bookmark
     pass
@@ -54,3 +73,4 @@ class NVDCVEWrapper(BaseModel):
 class NVDAPIFull(BaseModel):
     accessed: str = Field(alias="timestamp")
     vulnerabilities: List[NVDCVEWrapper]
+"""
