@@ -4,19 +4,58 @@ from datetime import datetime
 from typing import List, Any, Optional
 
 
-class NVDInfoFlattened(BaseModel):
+class NVDInfo(BaseModel):
     cve_id: str
-    base_score: float
-    severity: str
+    base_score: Optional[float] = None
+    severity: Optional[str] = None
     description: str
-    reporting_cna: str
+    reporting_cna: Optional[str] = None
     nist_cna: Optional[bool] = False
-    nist_score: Optional[float] = 0.0
+    nist_score: Optional[float] = None
     date_published: datetime
     date_last_modified: datetime
+    date_accessed: datetime
     cve_tags: Optional[List[str]] = None
     vendor_advisories: Optional[List[HttpUrl]] = None
     patches: Optional[List[HttpUrl]] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def flatten(cls, nvd_data: Any) -> Any:
+        cve_wrapper = nvd_data.get("vulnerabilities", [{}]).get("cve", {})
+        metrics_wrapper = cve_wrapper.get("metrics", {})
+        # set cvss version preference order
+        versions = [
+            "cvssMetricV40",
+            "cvssMetricV31",
+            "cvssMetricV30",
+            "cvssMetricV2",
+        ]
+
+        # get deeply nested data from 'mertics' wrapper
+        for metric_version in versions:
+            if metric_version in metrics_wrapper:
+                cvss_data = metrics_wrapper[metric_version][0].get("cvssData", {})
+
+                nvd_data["base_score"] = cvss_data.get("baseScore")
+                nvd_data["severity"] = cvss_data.get("baseSeverity")
+
+                # once we've captured one set of CVSS data, break
+                break
+
+        # get english language cve description
+        descriptions = cve_wrapper.get("descriptions", [])
+        for description in descriptions:
+            if description["lang"] == "en":
+                nvd_data["description"] = description["value"]
+
+                # once we've captured the english string, break
+                break
+
+        # fill out the rest of the fields from the 'cve' wrapper
+        nvd_data["cve_id"] = cve_wrapper.get("id")
+        nvd_data["date_accessed"] = nvd_data["timestamp"]
+        # bookmark
 
 
 # heavy edits needed later

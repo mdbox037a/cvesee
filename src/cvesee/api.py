@@ -12,9 +12,9 @@ def fetch_nvd_cve_data(cve_id: str) -> dict | None:
     }
 
     try:
-        r = requests.get(nvd_api_url, params=params, headers=headers, timeout=10)
-        r.raise_for_status()
-        return r.json()
+        nvd_data = requests.get(nvd_api_url, params=params, headers=headers, timeout=10)
+        nvd_data.raise_for_status()
+        return nvd_data.json()
     except requests.RequestException as e:
         print(f"Error requesting info for {cve_id}: {e}")
         return None
