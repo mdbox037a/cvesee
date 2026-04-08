@@ -32,11 +32,17 @@ class NVDInfo(BaseModel):
             "cvssMetricV2",
         ]
 
-        # get deeply nested data from 'mertics' wrapper
+        # get deeply nested data from 'metrics' wrapper
         for metric_version in versions:
             if metric_version in metrics_wrapper:
-                cvss_data = metrics_wrapper[metric_version][0].get("cvssData", {})
+                # TODO: add logic to differentiate between primary and secondary cna
+                # TODO: fields to-do list: nist_cna, nist_score
 
+                nvd_data["reporting_cna"] = metrics_wrapper[metric_version][0].get(
+                    "source"
+                )
+
+                cvss_data = metrics_wrapper[metric_version][0].get("cvssData", {})
                 nvd_data["base_score"] = cvss_data.get("baseScore")
                 nvd_data["severity"] = cvss_data.get("baseSeverity")
 
@@ -45,17 +51,27 @@ class NVDInfo(BaseModel):
 
         # get english language cve description
         descriptions = cve_wrapper.get("descriptions", [])
-        for description in descriptions:
-            if description["lang"] == "en":
-                nvd_data["description"] = description["value"]
+        for desc in descriptions:
+            if desc["lang"] == "en":
+                nvd_data["description"] = desc["value"]
 
                 # once we've captured the english string, break
                 break
 
+        # get vendor advisories and references
+        references = cve_wrapper.get("references", [])
+        for ref in references:
+            if "Vendor Advisory" in ref["tags"]:
+                nvd_data["vendor_advisories"].append(ref["url"])
+            if "Patch" in ref["tags"]:
+                nvd_data["patches"].append(ref["url"])
+
         # fill out the rest of the fields from the 'cve' wrapper
         nvd_data["cve_id"] = cve_wrapper.get("id")
+        nvd_data["date_published"] = cve_wrapper.get("published")
+        nvd_data["date_last_modified"] = cve_wrapper.get("lastModified")
         nvd_data["date_accessed"] = nvd_data["timestamp"]
-        # bookmark
+        nvd_data["cve_tags"] = cve_wrapper.get("cve_tags", [])
 
 
 # heavy edits needed later
