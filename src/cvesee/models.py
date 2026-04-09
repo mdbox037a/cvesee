@@ -6,7 +6,7 @@ from typing import List, Any, Optional
 
 class NVDInfo(BaseModel):
     cve_id: str
-    base_score: Optional[float] = None
+    rcna_score: Optional[float] = None
     severity: Optional[str] = None
     description: str
     reporting_cna: Optional[str] = None
@@ -22,8 +22,8 @@ class NVDInfo(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def flatten(cls, nvd_data: Any) -> Any:
-        cve_wrapper = nvd_data.get("vulnerabilities", [{}]).get("cve", {})
-        metrics_wrapper = cve_wrapper.get("metrics", {})
+        c_wrap = nvd_data.get("vulnerabilities", [{}]).get("cve", {})
+        m_wrap = c_wrap.get("metrics", {})
         # set cvss version preference order
         versions = [
             "cvssMetricV40",
@@ -33,24 +33,26 @@ class NVDInfo(BaseModel):
         ]
 
         # get deeply nested data from 'metrics' wrapper
-        for metric_version in versions:
-            if metric_version in metrics_wrapper:
-                # TODO: add logic to differentiate between primary and secondary cna
-                # TODO: fields to-do list: nist_cna, nist_score
+        for m_ver in versions:
+            if m_ver in m_wrap:
+                for index, item in enumerate(m_wrap[m_ver]):
+                    cvss_data = m_wrap[m_ver][index].get("cvssData", {})
+                    if item["source"] == "nist@nist.gov":
+                        nvd_data["nist_cna"] = True
+                        nvd_data["nist_score"] = cvss_data.get("baseScore")
+                        nvd_data["nist_severity"] = cvss_data.get("baseSeverity")
+                    elif not nvd_data["reporting_cna"]:
+                        # if we already have a reporting cna, skip
+                        nvd_data["reporting_cna"] = item["source"]
+                        nvd_data["rcna_score"] = cvss_data.get("baseScore")
+                        nvd_data["cna_severity"] = cvss_data.get("baseSeverity")
 
-                nvd_data["reporting_cna"] = metrics_wrapper[metric_version][0].get(
-                    "source"
-                )
-
-                cvss_data = metrics_wrapper[metric_version][0].get("cvssData", {})
-                nvd_data["base_score"] = cvss_data.get("baseScore")
-                nvd_data["severity"] = cvss_data.get("baseSeverity")
-
-                # once we've captured one set of CVSS data, break
+                # once we've captured one set of CVSS data, break, since we
+                # are moving in order from v4.0 -> 3.1 -> 3.0 -> 2
                 break
 
         # get english language cve description
-        descriptions = cve_wrapper.get("descriptions", [])
+        descriptions = c_wrap.get("descriptions", [])
         for desc in descriptions:
             if desc["lang"] == "en":
                 nvd_data["description"] = desc["value"]
@@ -59,7 +61,7 @@ class NVDInfo(BaseModel):
                 break
 
         # get vendor advisories and references
-        references = cve_wrapper.get("references", [])
+        references = c_wrap.get("references", [])
         for ref in references:
             if "Vendor Advisory" in ref["tags"]:
                 nvd_data["vendor_advisories"].append(ref["url"])
@@ -67,11 +69,11 @@ class NVDInfo(BaseModel):
                 nvd_data["patches"].append(ref["url"])
 
         # fill out the rest of the fields from the 'cve' wrapper
-        nvd_data["cve_id"] = cve_wrapper.get("id")
-        nvd_data["date_published"] = cve_wrapper.get("published")
-        nvd_data["date_last_modified"] = cve_wrapper.get("lastModified")
+        nvd_data["cve_id"] = c_wrap.get("id")
+        nvd_data["date_published"] = c_wrap.get("published")
+        nvd_data["date_last_modified"] = c_wrap.get("lastModified")
         nvd_data["date_accessed"] = nvd_data["timestamp"]
-        nvd_data["cve_tags"] = cve_wrapper.get("cve_tags", [])
+        nvd_data["cve_tags"] = c_wrap.get("cve_tags", [])
 
 
 # heavy edits needed later
