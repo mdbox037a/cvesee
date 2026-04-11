@@ -1,6 +1,7 @@
 import click
 import re
-from api import fetch_nvd_cve_data
+import inspect
+from cvesee.api import fetch_nvd_cve_data
 
 
 CVE_REGEX = re.compile(
@@ -23,15 +24,24 @@ def main():
     pass
 
 
-@click.command()
+@main.command()
 @click.option(
     "--source",
     "-s",
     type=click.Choice(["NVD", "GHSA", "UCT"], case_sensitive=False),
     default="NVD",
-    help="cve data source [NVD, GHSA, or UCT]",
+    help=inspect.cleandoc("""
+        The CVE data source to query.
+        
+        Currently supported:
+        - NVD (Nist National Vulnerability Database)
+
+        Planned:
+        - GHSA (GitHub Security Advisories)
+        - UCT (Ubuntu CVE Tracker)
+    """),
 )
-@click.argument("cve_id", callback=validate_cve, help='for example "CVE-2021-4104"')
+@click.argument("cve_id", callback=validate_cve)
 def info(source, cve_id):
     """Fetch and display details for a specific CVE ID"""
     if source == "NVD":
