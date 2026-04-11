@@ -1,2 +1,17 @@
+[project]
+name = "cvesee"
+version = "0.1.0"
+description = "command-line tool to work with package CVE data"
+requires-python = ">=3.10"
+dependencies = [
+  "click>=8.0",
+  "pydantic>=2.0",
+  "requests>=2.25",
+]
+
 [project.scripts]
 cvesee = "cvesee.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
