@@ -1,6 +1,5 @@
 import click
 import re
-import inspect
 from cvesee.api import fetch_nvd_cve_data
 
 
@@ -30,16 +29,11 @@ def main():
     "-s",
     type=click.Choice(["NVD", "GHSA", "UCT"], case_sensitive=False),
     default="NVD",
-    help=inspect.cleandoc("""
+    help="""
         The CVE data source to query.
-        
-        Currently supported:
-        - NVD (Nist National Vulnerability Database)
-
-        Planned:
-        - GHSA (GitHub Security Advisories)
-        - UCT (Ubuntu CVE Tracker)
-    """),
+        Currently supported: NVD (Nist National Vulnerability Database).
+        Planned: GHSA (GitHub Security Advisories) and UCT (Ubuntu CVE Tracker)
+    """,
 )
 @click.argument("cve_id", callback=validate_cve)
 def info(source, cve_id):
