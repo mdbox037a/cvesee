@@ -1,6 +1,7 @@
 import click
 import re
-from cvesee.api import fetch_nvd_cve_data
+from .api import fetch_nvd_cve_data
+from .models import NVDInfo
 
 
 CVE_REGEX = re.compile(
@@ -39,12 +40,28 @@ def main():
 def info(source, cve_id):
     """Fetch and display details for a specific CVE ID"""
     if source == "NVD":
-        click.echo(f"### Getting information about {cve_id} from {source} ###")
-        nvd_data = fetch_nvd_cve_data(cve_id)
-        # just splat to screen for now, since we do not have any parsing written yet
-        print(nvd_data)
+        click.echo(f"Status: Getting information about {cve_id} from {source}")
+        raw_nvd_data = fetch_nvd_cve_data(cve_id)
+        if not raw_nvd_data:
+            # something failed silently in the api call
+            click.echo(
+                "Error: raw data from the NVD not found - please try again later"
+            )
+            return
+
+        try:
+            parsed_nvd_data = NVDInfo(**raw_nvd_data)
+            # just splat flattened data to user, since no better parsing written yet
+            click.echo(f"\nStatus: Printing selected NVD data for {cve_id}:\n-----")
+            click.echo(parsed_nvd_data)
+        except Exception as e:
+            click.echo(f"\nError: Failed to parse data for {cve_id}")
+            click.echo(f"Error details: {e}")
+
     else:
-        click.echo(f"{source} still in-progress - please try another source")
+        click.echo(
+            f"Feature: supporting CVE info from {source} still in-progress - please try another source"
+        )
         return
 
 
