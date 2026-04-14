@@ -1,4 +1,7 @@
 import click
+from rich import box
+from rich.console import Console
+from rich.table import Table
 import re
 from .api import fetch_nvd_cve_data
 from .models import NVDInfo
@@ -54,6 +57,17 @@ def info(source, cve_id):
             # just splat flattened data to user, since no better parsing written yet
             click.echo(f"\nStatus: Printing selected NVD data for {cve_id}:\n-----")
             click.echo(parsed_nvd_data)
+
+            # rich output setup and print
+            console = Console()
+            table = Table(title=parsed_nvd_data.cve_id, box=box.ASCII_DOUBLE_HEAD)
+            table.add_column("Key", justify="right", no_wrap=True)
+            table.add_column("Value", justify="left")
+            for element, value in parsed_nvd_data.model_dump().items():
+                table.add_row(element.replace("_", " ").title(), str(value))
+
+            console.print(table)
+
         except Exception as e:
             click.echo(f"\nError: Failed to parse data for {cve_id}")
             click.echo(f"Error details: {e}")
