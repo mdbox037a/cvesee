@@ -6,12 +6,13 @@ from typing import List, Any, Optional
 
 class NVDInfo(BaseModel):
     cve_id: str
-    cna: Optional[float] = None
-    severity: Optional[str] = None
-    description: str
     reporting_cna: Optional[str] = None
+    cna_score: Optional[float] = None
+    cna_severity: Optional[str] = None
+    description: str
     nist_evaluated: Optional[bool] = False
     nist_score: Optional[float] = None
+    nist_severity: Optional[str] = None
     date_published: datetime
     date_last_modified: datetime
     date_accessed: datetime
@@ -55,20 +56,20 @@ class NVDInfo(BaseModel):
             if m_ver in m_wrap:
                 for index, item in enumerate(m_wrap[m_ver]):
                     cvss_data = m_wrap[m_ver][index].get("cvssData", {})
-                    if item["source"] == "nist@nist.gov":
+                    if "nist" in item["source"] and not flat_data.get("nist_evaluated"):
                         flat_data["nist_evaluated"] = True
                         flat_data["nist_score"] = cvss_data.get("baseScore")
-                        # prefer NIST severity, so overwrite cna report if necessary
-                        flat_data["severity"] = cvss_data.get("baseSeverity")
+                        flat_data["nist_severity"] = cvss_data.get("baseSeverity")
                     elif not flat_data.get("reporting_cna"):
                         # if we already have a reporting cna, skip
                         flat_data["reporting_cna"] = item["source"]
-                        flat_data["cna"] = cvss_data.get("baseScore")
-                        flat_data["severity"] = cvss_data.get("baseSeverity")
+                        flat_data["cna_score"] = cvss_data.get("baseScore")
+                        flat_data["cna_severity"] = cvss_data.get("baseSeverity")
 
                 # once we've captured one set of CVSS data, break, since we
                 # are moving in order from v4.0 -> 3.1 -> 3.0 -> 2
-                break
+                if flat_data.get("nist_evaluated") and flat_data.get("reporting_cna"):
+                    break
 
         # get english language cve description
         descriptions = c_wrap.get("descriptions", [])
