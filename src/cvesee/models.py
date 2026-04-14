@@ -84,7 +84,7 @@ class NVDInfo(BaseModel):
             tags = ref.get("tags", [])
             if "Vendor Advisory" in tags:
                 flat_data["vendor_advisories"].append(ref["url"])
-            if "Patch" in ref["tags"]:
+            if "Patch" in tags:
                 flat_data["patches"].append(ref["url"])
 
         # fill out the rest of the fields from the 'cve' wrapper
