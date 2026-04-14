@@ -5,6 +5,8 @@ from typing import List, Optional
 
 class NVDInfo(BaseModel):
     cve_id: str
+    vendor: Optional[List[str]] = None
+    product: Optional[List[str]] = None
     reporting_cna: Optional[str] = None
     cna_score: Optional[float] = None
     cna_severity: Optional[str] = None
@@ -31,6 +33,8 @@ class NVDInfo(BaseModel):
         # to avoid breaks in parsing logic below)
         flat_data = {
             "cve_id": "",
+            "vendor": [],
+            "product": [],
             "description": "",
             "date_published": "",
             "date_last_modified": "",
@@ -42,6 +46,7 @@ class NVDInfo(BaseModel):
 
         c_wrap = nvd_data.get("vulnerabilities", [{}])[0].get("cve", {})
         m_wrap = c_wrap.get("metrics", {})
+        conf_wrap = c_wrap.get("configurations", [{}])
         # set cvss version preference order
         versions = [
             "cvssMetricV40",
@@ -79,6 +84,15 @@ class NVDInfo(BaseModel):
                 # once we've captured the english string, break
                 break
 
+        # get vendor and product from configurations madness
+        for conf in conf_wrap:
+            # TODO: there is a bug here to fix at next session
+            matches = conf.get("nodes", [{}]).get("cpeMatch", [{}])
+            for match in matches:
+                vendor, product = parse_cpe(match.get("criteria"))
+                flat_data["vendor"].append(vendor)
+                flat_data["product"].append(product)
+
         # get vendor advisories and references
         references = c_wrap.get("references", [])
         for ref in references:
@@ -96,3 +110,8 @@ class NVDInfo(BaseModel):
         flat_data["cve_tags"] = c_wrap.get("cve_tags", [])
 
         return flat_data
+
+
+def parse_cpe(cpe_string: str) -> (str, str):
+    parts = cpe_string.split(":")
+    return parts[3], parts[4]
