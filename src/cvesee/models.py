@@ -1,7 +1,6 @@
-from pydantic import BaseModel, Field, model_validator, HttpUrl
-from dataclasses import dataclass
+from pydantic import BaseModel, model_validator, HttpUrl
 from datetime import datetime
-from typing import List, Any, Optional
+from typing import List, Optional
 
 
 class NVDInfo(BaseModel):
@@ -9,10 +8,10 @@ class NVDInfo(BaseModel):
     reporting_cna: Optional[str] = None
     cna_score: Optional[float] = None
     cna_severity: Optional[str] = None
-    description: str
     nist_evaluated: Optional[bool] = False
     nist_score: Optional[float] = None
     nist_severity: Optional[str] = None
+    description: str
     date_published: datetime
     date_last_modified: datetime
     date_accessed: datetime

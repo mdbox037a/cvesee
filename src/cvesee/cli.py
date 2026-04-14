@@ -60,7 +60,7 @@ def info(source, cve_id):
             # rich output setup and print
             console = Console()
             table = Table(
-                title=f"{parsed_nvd_data.cve_id} Summary",
+                title=f"{parsed_nvd_data.cve_id} | {source} Source Summary",
                 title_justify="left",
                 box=box.ASCII2,
                 show_header=False,
