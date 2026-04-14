@@ -53,16 +53,21 @@ def info(source, cve_id):
             return
 
         try:
+            click.echo("Status: Successfully retrieved data from NVD\n")
             parsed_nvd_data = NVDInfo(**raw_nvd_data)
             # just splat flattened data to user, since no better parsing written yet
-            click.echo(f"\nStatus: Printing selected NVD data for {cve_id}:\n-----")
-            click.echo(parsed_nvd_data)
-
+            # click.echo(f"\nStatus: Printing selected NVD data for {cve_id}:\n-----")
             # rich output setup and print
             console = Console()
-            table = Table(title=parsed_nvd_data.cve_id, box=box.ASCII_DOUBLE_HEAD)
-            table.add_column("Key", justify="right", no_wrap=True)
-            table.add_column("Value", justify="left")
+            table = Table(
+                title=f"{parsed_nvd_data.cve_id} Summary",
+                title_justify="left",
+                box=box.ASCII2,
+                show_header=False,
+                width=80,
+            )
+            table.add_column(justify="right", no_wrap=True)
+            table.add_column(justify="left")
             for element, value in parsed_nvd_data.model_dump().items():
                 table.add_row(element.replace("_", " ").title(), str(value))
 
