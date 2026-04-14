@@ -6,11 +6,11 @@ from typing import List, Any, Optional
 
 class NVDInfo(BaseModel):
     cve_id: str
-    rcna_score: Optional[float] = None
+    cna: Optional[float] = None
     severity: Optional[str] = None
     description: str
     reporting_cna: Optional[str] = None
-    nist_cna: Optional[bool] = False
+    nist_evaluated: Optional[bool] = False
     nist_score: Optional[float] = None
     date_published: datetime
     date_last_modified: datetime
@@ -56,14 +56,15 @@ class NVDInfo(BaseModel):
                 for index, item in enumerate(m_wrap[m_ver]):
                     cvss_data = m_wrap[m_ver][index].get("cvssData", {})
                     if item["source"] == "nist@nist.gov":
-                        flat_data["nist_cna"] = True
+                        flat_data["nist_evaluated"] = True
                         flat_data["nist_score"] = cvss_data.get("baseScore")
-                        flat_data["nist_severity"] = cvss_data.get("baseSeverity")
+                        # prefer NIST severity, so overwrite cna report if necessary
+                        flat_data["severity"] = cvss_data.get("baseSeverity")
                     elif not flat_data.get("reporting_cna"):
                         # if we already have a reporting cna, skip
                         flat_data["reporting_cna"] = item["source"]
-                        flat_data["rcna_score"] = cvss_data.get("baseScore")
-                        flat_data["cna_severity"] = cvss_data.get("baseSeverity")
+                        flat_data["cna"] = cvss_data.get("baseScore")
+                        flat_data["severity"] = cvss_data.get("baseSeverity")
 
                 # once we've captured one set of CVSS data, break, since we
                 # are moving in order from v4.0 -> 3.1 -> 3.0 -> 2
