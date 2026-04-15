@@ -64,7 +64,7 @@ def info(source, cve_id):
                 title_justify="left",
                 box=box.ASCII2,
                 show_header=False,
-                width=80,
+                # width=80,
             )
             table.add_column(justify="right", no_wrap=True)
             table.add_column(justify="left")
