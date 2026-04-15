@@ -70,6 +70,8 @@ def info(source, cve_id):
             table.add_column(justify="left")
             for element, value in parsed_nvd_data.model_dump().items():
                 table.add_row(element.replace("_", " ").title(), str(value))
+            # TODO: figure out how to print HttpUrls as strings
+            # TODO: color output for severities?
 
             console.print(table)
 
