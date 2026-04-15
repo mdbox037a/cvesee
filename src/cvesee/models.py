@@ -5,8 +5,7 @@ from typing import List, Optional
 
 class NVDInfo(BaseModel):
     cve_id: str
-    vendor: Optional[List[str]] = None
-    product: Optional[List[str]] = None
+    products: Optional[List[str]] = None
     reporting_cna: Optional[str] = None
     cna_score: Optional[float] = None
     cna_severity: Optional[str] = None
@@ -33,8 +32,7 @@ class NVDInfo(BaseModel):
         # to avoid breaks in parsing logic below)
         flat_data = {
             "cve_id": "",
-            "vendor": [],
-            "product": [],
+            "products": [],
             "description": "",
             "date_published": "",
             "date_last_modified": "",
@@ -86,12 +84,12 @@ class NVDInfo(BaseModel):
 
         # get vendor and product from configurations madness
         for conf in conf_wrap:
-            # TODO: there is a bug here to fix at next session
-            matches = conf.get("nodes", [{}]).get("cpeMatch", [{}])
-            for match in matches:
-                vendor, product = parse_cpe(match.get("criteria"))
-                flat_data["vendor"].append(vendor)
-                flat_data["product"].append(product)
+            nodes = conf.get("nodes", [{}])
+            for node in nodes:
+                matches = node.get("cpeMatch", [{}])
+                for match in matches:
+                    vendor, product = parse_cpe(match.get("criteria"))
+                    flat_data["products"].append(f"{vendor}: {product}")
 
         # get vendor advisories and references
         references = c_wrap.get("references", [])
