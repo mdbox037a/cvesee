@@ -89,7 +89,8 @@ class NVDInfo(BaseModel):
                 matches = node.get("cpeMatch", [{}])
                 for match in matches:
                     vendor, product = parse_cpe(match.get("criteria"))
-                    flat_data["products"].append(f"{vendor}: {product}")
+                    if f"{vendor}: {product}" not in flat_data["products"]:
+                        flat_data["products"].append(f"{vendor}: {product}")
 
         # get vendor advisories and references
         references = c_wrap.get("references", [])
