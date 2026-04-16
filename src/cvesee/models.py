@@ -62,7 +62,10 @@ class NVDInfo(BaseModel):
                         flat_data["nist_evaluated"] = True
                         flat_data["nist_score"] = cvss_data.get("baseScore")
                         flat_data["nist_severity"] = cvss_data.get("baseSeverity")
-                    elif not flat_data.get("reporting_cna"):
+                    elif (
+                        not flat_data.get("reporting_cna")
+                        and "nist" not in item["source"]
+                    ):
                         # if we already have a reporting cna, skip
                         flat_data["reporting_cna"] = item["source"]
                         flat_data["cna_score"] = cvss_data.get("baseScore")
