@@ -1,6 +1,7 @@
 from pydantic import BaseModel, model_validator, HttpUrl
 from datetime import datetime
 from typing import List, Optional
+from .utils import parse_cpe
 
 
 class NVDInfo(BaseModel):
@@ -115,8 +116,3 @@ class NVDInfo(BaseModel):
         flat_data["cve_tags"] = c_wrap.get("cve_tags", [])
 
         return flat_data
-
-
-def parse_cpe(cpe_string: str) -> (str, str):
-    parts = cpe_string.split(":")
-    return parts[3], parts[4]
