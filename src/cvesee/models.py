@@ -96,17 +96,10 @@ class NVDInfo(BaseModel):
             if match.get("criteria")
         ]
 
-        # TODO: maybe make 'packages' a dictionary to avoid many repetions of same vendor name
-        # -> see for example CVE-2021-4104
         packages = defaultdict(set)
         for criteria in all_criteria:
             vendor, product = parse_cpe(criteria)
             packages[vendor].add(product)
-
-        # packages = set()
-        # for criteria in all_criteria:
-        #     vendor, product = parse_cpe(criteria)
-        #     packages.add(f"{vendor}: {product}")
 
         flat_data["packages"] = packages
 
