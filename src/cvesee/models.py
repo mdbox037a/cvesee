@@ -5,7 +5,7 @@ from typing import List, Optional
 
 class NVDInfo(BaseModel):
     cve_id: str
-    products: Optional[List[str]] = None
+    packages: Optional[List[str]] = None
     reporting_cna: Optional[str] = None
     cna_score: Optional[float] = None
     cna_severity: Optional[str] = None
@@ -32,7 +32,7 @@ class NVDInfo(BaseModel):
         # to avoid breaks in parsing logic below)
         flat_data = {
             "cve_id": "",
-            "products": [],
+            "packages": [],
             "description": "",
             "date_published": "",
             "date_last_modified": "",
@@ -44,7 +44,6 @@ class NVDInfo(BaseModel):
 
         c_wrap = nvd_data.get("vulnerabilities", [{}])[0].get("cve", {})
         m_wrap = c_wrap.get("metrics", {})
-        conf_wrap = c_wrap.get("configurations", [{}])
         # set cvss version preference order
         versions = [
             "cvssMetricV40",
@@ -83,14 +82,21 @@ class NVDInfo(BaseModel):
                 break
 
         # get vendor and product from configurations madness
-        for conf in conf_wrap:
-            nodes = conf.get("nodes", [{}])
-            for node in nodes:
-                matches = node.get("cpeMatch", [{}])
-                for match in matches:
-                    vendor, product = parse_cpe(match.get("criteria"))
-                    if f"{vendor}: {product}" not in flat_data["products"]:
-                        flat_data["products"].append(f"{vendor}: {product}")
+        conf_wrap = c_wrap.get("configurations", [])
+        all_criteria = [
+            match.get("criteria")
+            for conf in conf_wrap
+            for node in conf.get("nodes", [])
+            for match in node.get("cpeMatch", [])
+            if match.get("criteria")
+        ]
+
+        packages = set()
+        for criteria in all_criteria:
+            vendor, product = parse_cpe(criteria)
+            packages.add(f"{vendor}: {product}")
+
+        flat_data["packages"] = list(packages)
 
         # get vendor advisories and references
         references = c_wrap.get("references", [])
