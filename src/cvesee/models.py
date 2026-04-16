@@ -2,11 +2,12 @@ from pydantic import BaseModel, model_validator, HttpUrl
 from datetime import datetime
 from typing import List, Optional
 from .utils import parse_cpe
+from collections import defaultdict
 
 
 class NVDInfo(BaseModel):
     cve_id: str
-    packages: Optional[List[str]] = None
+    packages: Optional[dict[str, list[str]]] = None
     reporting_cna: Optional[str] = None
     cna_score: Optional[float] = None
     cna_severity: Optional[str] = None
@@ -33,7 +34,7 @@ class NVDInfo(BaseModel):
         # to avoid breaks in parsing logic below)
         flat_data = {
             "cve_id": "",
-            "packages": [],
+            "packages": {},
             "description": "",
             "date_published": "",
             "date_last_modified": "",
@@ -95,12 +96,19 @@ class NVDInfo(BaseModel):
             if match.get("criteria")
         ]
 
-        packages = set()
+        # TODO: maybe make 'packages' a dictionary to avoid many repetions of same vendor name
+        # -> see for example CVE-2021-4104
+        packages = defaultdict(set)
         for criteria in all_criteria:
             vendor, product = parse_cpe(criteria)
-            packages.add(f"{vendor}: {product}")
+            packages[vendor].add(product)
 
-        flat_data["packages"] = list(packages)
+        # packages = set()
+        # for criteria in all_criteria:
+        #     vendor, product = parse_cpe(criteria)
+        #     packages.add(f"{vendor}: {product}")
+
+        flat_data["packages"] = packages
 
         # get vendor advisories and references
         references = c_wrap.get("references", [])

@@ -22,16 +22,27 @@ def display_cve_summary(parsed_cve_data: dict, source: str) -> None:
     )
     table.add_column(justify="right", no_wrap=True)
     table.add_column(justify="left")
-    for element, value in parsed_cve_data.model_dump(mode="json").items():
-        match value:
+    print(f"DEBUG: \n\n{parsed_cve_data.model_dump()}\n\n")
+    for element, info in parsed_cve_data.model_dump(mode="json").items():
+        match info:
+            case str():
+                pretty_info = info
+                if pretty_info in SEVERITY_COLORS:
+                    pretty_info = SEVERITY_COLORS[pretty_info]
             case list():
-                pretty_value = "\n".join(value) if value else "[dim]None[/dim]"
+                pretty_info = "\n".join(info) if info else "[dim]None[/dim]"
+            case dict():
+                package_lines = []
+                for vendor, products in info.items():
+                    product_str = ", ".join(products)
+                    package_lines.append(f"[dim]{vendor}[/dim]: {product_str}")
+                pretty_info = (
+                    "\n".join(package_lines) if package_lines else "[dim]None[/dim]"
+                )
             case None:
-                pretty_value = f"[dim]{value}[/dim]"
+                pretty_info = f"[dim]{info}[/dim]"
             case _:
-                pretty_value = str(value)
-        if pretty_value in SEVERITY_COLORS:
-            pretty_value = SEVERITY_COLORS[pretty_value]
-        table.add_row(element.replace("_", " ").title(), pretty_value)
+                pretty_info = str(info)
+        table.add_row(element.replace("_", " ").title(), pretty_info)
 
     console.print(table)
