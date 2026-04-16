@@ -1,10 +1,8 @@
 import click
-from rich import box
-from rich.console import Console
-from rich.table import Table
 import re
 from .api import fetch_nvd_cve_data
 from .models import NVDInfo
+from .ui import display_cve_summary
 
 
 CVE_REGEX = re.compile(
@@ -55,26 +53,7 @@ def info(source, cve_id):
         try:
             click.echo("Status: Successfully retrieved data from NVD\n")
             parsed_nvd_data = NVDInfo(**raw_nvd_data)
-            # just splat flattened data to user, since no better parsing written yet
-            # click.echo(f"\nStatus: Printing selected NVD data for {cve_id}:\n-----")
-            # rich output setup and print
-            console = Console()
-            table = Table(
-                title=f"{parsed_nvd_data.cve_id} | {source} Source Summary",
-                title_justify="left",
-                box=box.ASCII2,
-                show_header=False,
-                # width=80,
-            )
-            table.add_column(justify="right", no_wrap=True)
-            table.add_column(justify="left")
-            for element, value in parsed_nvd_data.model_dump().items():
-                table.add_row(element.replace("_", " ").title(), str(value))
-            # TODO: figure out how to print HttpUrls as strings
-            # TODO: color output for severities?
-
-            console.print(table)
-
+            display_cve_summary(parsed_nvd_data, source)
         except Exception as e:
             click.echo(f"\nError: Failed to parse data for {cve_id}")
             click.echo(f"Error details: {e}")
