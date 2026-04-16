@@ -22,7 +22,6 @@ def display_cve_summary(parsed_cve_data: dict, source: str) -> None:
     )
     table.add_column(justify="right", no_wrap=True)
     table.add_column(justify="left")
-    print(f"DEBUG: \n\n{parsed_cve_data.model_dump()}\n\n")
     for element, info in parsed_cve_data.model_dump(mode="json").items():
         match info:
             case str():
