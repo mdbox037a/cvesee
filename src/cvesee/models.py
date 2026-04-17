@@ -6,6 +6,8 @@ from collections import defaultdict
 
 
 class NVDInfo(BaseModel):
+    """pydantic model to parse selected NVD CVE API data"""
+
     cve_id: str
     packages: Optional[dict[str, list[str]]] = None
     reporting_cna: Optional[str] = None
@@ -120,3 +122,20 @@ class NVDInfo(BaseModel):
         flat_data["cve_tags"] = c_wrap.get("cve_tags", [])
 
         return flat_data
+
+
+class UbuSecAPIInfo(BaseModel):
+    """pydantic model to hold parsed Ubuntu security API data"""
+
+    cve_id: str
+    packages: Optional[dict[str, list[str]]] = None
+    nvd_score: Optional[float] = None
+    nvd_severity: Optional[str] = None
+    ubuntu_priority: Optional[str] = None
+    description: str
+    canonical_notes: Optional[str] = None
+    date_published: datetime
+    date_last_modified: datetime
+    date_accessed: datetime
+    notices: Optional[List[str]] = None
+    updated_packages: Optional[List[str]] = None
