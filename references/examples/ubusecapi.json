@@ -1,0 +1,326 @@
+{
+  "bugs": [
+    "https://bugzilla.redhat.com/show_bug.cgi?id=2031667"
+  ],
+  "codename": null,
+  "cvss3": 7.5,
+  "description": "\nJMSAppender in Log4j 1.2 is vulnerable to deserialization of untrusted data\nwhen the attacker has write access to the Log4j configuration. The attacker\ncan provide TopicBindingName and TopicConnectionFactoryBindingName\nconfigurations causing JMSAppender to perform JNDI requests that result in\nremote code execution in a similar fashion to CVE-2021-44228. Note this\nissue only affects Log4j 1.2 when specifically configured to use\nJMSAppender, which is not the default. Apache Log4j 1.2 reached end of life\nin August 2015. Users should upgrade to Log4j 2 as it addresses numerous\nother issues from the previous versions.",
+  "id": "CVE-2021-4104",
+  "impact": {
+    "baseMetricV3": {
+      "cvssV3": {
+        "attackComplexity": "HIGH",
+        "attackVector": "NETWORK",
+        "availabilityImpact": "HIGH",
+        "baseScore": 7.5,
+        "baseSeverity": "HIGH",
+        "confidentialityImpact": "HIGH",
+        "integrityImpact": "HIGH",
+        "privilegesRequired": "LOW",
+        "scope": "UNCHANGED",
+        "userInteraction": "NONE",
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H",
+        "version": "3.1"
+      }
+    }
+  },
+  "mitigation": "",
+  "notes": [
+    {
+      "author": "mdeslaur",
+      "note": "This issue is similar to CVE-2021-44228, but for log2j < 2.0 and\nis only vulnerable if configured to use JMSAppender.\nFor an environment to be vulnerable, an attacker would need write access\nto the log4j.properties configuration file to specifically enable the JMS\nAppender and configure it with a JNDI lookup to a third party server. If\nan attacker has write access to the log4j.properties configuration file,\nthere are also other configuration options that can be used to perform\ncode execution attacks. We therefore recommend configuration files be set\nwith appropriate permissions to only permit being modified by trusted\nindividuals."
+    }
+  ],
+  "notices": [
+    {
+      "cves_ids": [
+        "CVE-2021-4104"
+      ],
+      "description": "It was discovered that Apache Log4j 1.2 was vulnerable to deserialization of\nuntrusted data if the configuration file was editable. An attacker could use\nthis vulnerability to cause a DoS or possibly execute arbitrary code.\n",
+      "id": "USN-5223-1",
+      "instructions": "In general, a standard system update will make all the necessary changes.\n",
+      "is_hidden": false,
+      "published": "2022-01-12T19:31:51.929102",
+      "references": [],
+      "release_packages": {
+        "bionic": [
+          {
+            "description": "Java-based open-source logging tool",
+            "is_source": true,
+            "name": "apache-log4j1.2",
+            "version": "1.2.17-8+deb10u1ubuntu0.1"
+          },
+          {
+            "is_source": false,
+            "is_visible": false,
+            "name": "liblog4j1.2-java-doc",
+            "pocket": "security",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-8+deb10u1ubuntu0.1",
+            "version_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2/1.2.17-8+deb10u1ubuntu0.1"
+          },
+          {
+            "is_source": false,
+            "is_visible": true,
+            "name": "liblog4j1.2-java",
+            "pocket": "security",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-8+deb10u1ubuntu0.1",
+            "version_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2/1.2.17-8+deb10u1ubuntu0.1"
+          }
+        ],
+        "focal": [
+          {
+            "description": "Java-based open-source logging tool",
+            "is_source": true,
+            "name": "apache-log4j1.2",
+            "version": "1.2.17-9ubuntu0.1"
+          },
+          {
+            "is_source": false,
+            "is_visible": false,
+            "name": "liblog4j1.2-java-doc",
+            "pocket": "security",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-9ubuntu0.1",
+            "version_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2/1.2.17-9ubuntu0.1"
+          },
+          {
+            "is_source": false,
+            "is_visible": true,
+            "name": "liblog4j1.2-java",
+            "pocket": "security",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-9ubuntu0.1",
+            "version_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2/1.2.17-9ubuntu0.1"
+          }
+        ],
+        "hirsute": [
+          {
+            "description": "Java-based open-source logging tool",
+            "is_source": true,
+            "name": "apache-log4j1.2",
+            "version": "1.2.17-10ubuntu0.21.04.1"
+          },
+          {
+            "is_source": false,
+            "is_visible": false,
+            "name": "liblog4j1.2-java-doc",
+            "pocket": "security",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-10ubuntu0.21.04.1",
+            "version_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2/1.2.17-10ubuntu0.21.04.1"
+          },
+          {
+            "is_source": false,
+            "is_visible": true,
+            "name": "liblog4j1.2-java",
+            "pocket": "security",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-10ubuntu0.21.04.1",
+            "version_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2/1.2.17-10ubuntu0.21.04.1"
+          }
+        ],
+        "impish": [
+          {
+            "description": "Java-based open-source logging tool",
+            "is_source": true,
+            "name": "apache-log4j1.2",
+            "version": "1.2.17-10ubuntu0.21.10.1"
+          },
+          {
+            "is_source": false,
+            "is_visible": false,
+            "name": "liblog4j1.2-java-doc",
+            "pocket": "security",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-10ubuntu0.21.10.1",
+            "version_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2/1.2.17-10ubuntu0.21.10.1"
+          },
+          {
+            "is_source": false,
+            "is_visible": true,
+            "name": "liblog4j1.2-java",
+            "pocket": "security",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-10ubuntu0.21.10.1",
+            "version_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2/1.2.17-10ubuntu0.21.10.1"
+          }
+        ]
+      },
+      "summary": "Apache Log4j 1.2 could be made to crash or run programs if it received specially\ncrafted input.\n",
+      "title": "Apache Log4j 1.2 vulnerability",
+      "type": "USN"
+    },
+    {
+      "cves_ids": [
+        "CVE-2021-4104"
+      ],
+      "description": "USN-5223-1 fixed a vulnerability in Apache Log4j 1.2. This update\nprovides the corresponding update for Ubuntu 16.04 ESM.\n\nOriginal advisory details:\n\n It was discovered that Apache Log4j 1.2 was vulnerable to deserialization of\n untrusted data if the configuration file was editable. An attacker could use\n this vulnerability to cause a DoS or possibly execute arbitrary code.\n",
+      "id": "USN-5223-2",
+      "instructions": "In general, a standard system update will make all the necessary changes.\n",
+      "is_hidden": false,
+      "published": "2022-02-08T21:01:33.264601",
+      "references": [],
+      "release_packages": {
+        "xenial": [
+          {
+            "description": "Java-based open-source logging tool",
+            "is_source": true,
+            "name": "apache-log4j1.2",
+            "version": "1.2.17-7ubuntu1+esm1"
+          },
+          {
+            "is_source": false,
+            "is_visible": false,
+            "name": "liblog4j1.2-java-doc",
+            "pocket": "esm-apps",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-7ubuntu1+esm1",
+            "version_link": null
+          },
+          {
+            "is_source": false,
+            "is_visible": true,
+            "name": "liblog4j1.2-java",
+            "pocket": "esm-apps",
+            "source_link": "https://launchpad.net/ubuntu/+source/apache-log4j1.2",
+            "version": "1.2.17-7ubuntu1+esm1",
+            "version_link": null
+          }
+        ]
+      },
+      "summary": "Apache Log4j 1.2 could be made to crash or run programs if it received specially\ncrafted input.\n",
+      "title": "Apache Log4j 1.2 vulnerability",
+      "type": "USN"
+    }
+  ],
+  "notices_ids": [
+    "USN-5223-1",
+    "USN-5223-2"
+  ],
+  "packages": [
+    {
+      "debian": "https://tracker.debian.org/pkg/apache-log4j1.2",
+      "name": "apache-log4j1.2",
+      "source": "https://ubuntu.com/security/cve?package=apache-log4j1.2",
+      "statuses": [
+        {
+          "component": null,
+          "description": "1.2.17-11",
+          "pocket": "security",
+          "release_codename": "kinetic",
+          "status": "not-affected"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-11",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "released"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-8+deb10u1ubuntu0.1",
+          "pocket": "security",
+          "release_codename": "bionic",
+          "status": "released"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-9ubuntu0.1",
+          "pocket": "security",
+          "release_codename": "focal",
+          "status": "released"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-10ubuntu0.21.04.1",
+          "pocket": "security",
+          "release_codename": "hirsute",
+          "status": "released"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-10ubuntu0.21.10.1",
+          "pocket": "security",
+          "release_codename": "impish",
+          "status": "released"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-7ubuntu1+esm1",
+          "pocket": "esm-apps",
+          "release_codename": "xenial",
+          "status": "released"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-11",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "not-affected"
+        },
+        {
+          "component": null,
+          "description": "end of life, was needed",
+          "pocket": "security",
+          "release_codename": "lunar",
+          "status": "ignored"
+        },
+        {
+          "component": null,
+          "description": "end of life, was needed",
+          "pocket": "security",
+          "release_codename": "mantic",
+          "status": "ignored"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-4ubuntu3+esm1",
+          "pocket": "esm-infra",
+          "release_codename": "trusty",
+          "status": "released"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-11",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "not-affected"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-11",
+          "pocket": "security",
+          "release_codename": "oracular",
+          "status": "not-affected"
+        },
+        {
+          "component": null,
+          "description": "1.2.17-11",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "not-affected"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=apache-log4j1.2"
+    }
+  ],
+  "patches": {
+    "apache-log4j1.2": []
+  },
+  "priority": "medium",
+  "published": "2021-12-14T12:15:00",
+  "references": [
+    "https://github.com/apache/logging-log4j2/pull/608#issuecomment-990494126",
+    "https://www.openwall.com/lists/oss-security/2021/12/13/2",
+    "https://ubuntu.com/security/notices/USN-5223-1",
+    "https://ubuntu.com/security/notices/USN-5223-2",
+    "https://www.cve.org/CVERecord?id=CVE-2021-4104"
+  ],
+  "status": "active",
+  "tags": {},
+  "ubuntu_description": "",
+  "updated_at": "2025-08-25T23:41:40.121806+00:00"
+}
