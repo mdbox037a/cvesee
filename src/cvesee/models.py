@@ -129,9 +129,9 @@ class UbuSecAPIInfo(BaseModel):
 
     cve_id: str
     packages: Optional[dict[str, list[str]]] = None
+    ubuntu_priority: Optional[str] = None
     nvd_score: Optional[float] = None
     nvd_severity: Optional[str] = None
-    ubuntu_priority: Optional[str] = None
     description: str
     canonical_notes: Optional[str] = None
     date_published: datetime
@@ -139,3 +139,21 @@ class UbuSecAPIInfo(BaseModel):
     date_accessed: datetime
     notices: Optional[List[str]] = None
     updated_packages: Optional[List[str]] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def flatten(cls, ubusec_data: dict) -> dict:
+        """select Ubuntu security api data and place in flat data structure"""
+
+        flat_data = {
+            "cve_id": "",
+            "packages": {},  # this needs better defining later
+            "description": "",
+            "date_published": "",
+            "date_last_modified": "",
+            "date_accessed": "",
+            "notices": [],
+            "updated_packages": [],
+        }
+
+        return flat_data
