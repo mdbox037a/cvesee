@@ -1,0 +1,883 @@
+{
+  "bugs": [
+    ""
+  ],
+  "codename": null,
+  "cvss3": 7.5,
+  "description": "\nValidating certificate chains which contain DSA public keys can cause\nprograms to panic, due to a interface cast that assumes they implement the\nEqual method. This affects programs which validate arbitrary certificate\nchains.",
+  "id": "CVE-2025-58188",
+  "impact": {
+    "baseMetricV3": {
+      "cvssV3": {
+        "attackComplexity": "LOW",
+        "attackVector": "NETWORK",
+        "availabilityImpact": "HIGH",
+        "baseScore": 7.5,
+        "baseSeverity": "HIGH",
+        "confidentialityImpact": "NONE",
+        "integrityImpact": "NONE",
+        "privilegesRequired": "NONE",
+        "scope": "UNCHANGED",
+        "userInteraction": "NONE",
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "version": "3.1"
+      }
+    }
+  },
+  "mitigation": "",
+  "notes": [
+    {
+      "author": "mdeslaur",
+      "note": "Packages built using golang need to be rebuilt once the\nvulnerability has been fixed. This CVE entry does not\nlist packages that need rebuilding outside of the main\nrepository or the Ubuntu variants with PPA overlays.\n\nWarning: do not include nullboot in the list of no-change\nrebuilds after fixing an issue in golang."
+    }
+  ],
+  "notices": [],
+  "notices_ids": [],
+  "packages": [
+    {
+      "debian": "https://tracker.debian.org/pkg/golang",
+      "name": "golang",
+      "source": "https://ubuntu.com/security/cve?package=golang",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.6",
+      "name": "golang-1.6",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.6",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "xenial",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.6"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.8",
+      "name": "golang-1.8",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.8",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "bionic",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.8"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.9",
+      "name": "golang-1.9",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.9",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "bionic",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.9"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.10",
+      "name": "golang-1.10",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.10",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "trusty",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "xenial",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "bionic",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.10"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.13",
+      "name": "golang-1.13",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.13",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "xenial",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "bionic",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "focal",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.13"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.14",
+      "name": "golang-1.14",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.14",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "focal",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.14"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.16",
+      "name": "golang-1.16",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.16",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "bionic",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "focal",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.16"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.17",
+      "name": "golang-1.17",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.17",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.17"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.18",
+      "name": "golang-1.18",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.18",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "xenial",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "bionic",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "focal",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.18"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.20",
+      "name": "golang-1.20",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.20",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "focal",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.20"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.21",
+      "name": "golang-1.21",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.21",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "focal",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.21"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.22",
+      "name": "golang-1.22",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.22",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "focal",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.22"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.23",
+      "name": "golang-1.23",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.23",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "end of life, was needs-triage",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "ignored"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.23"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.24",
+      "name": "golang-1.24",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.24",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "end of life, was needs-triage",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "ignored"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.24"
+    },
+    {
+      "debian": "https://tracker.debian.org/pkg/golang-1.25",
+      "name": "golang-1.25",
+      "source": "https://ubuntu.com/security/cve?package=golang-1.25",
+      "statuses": [
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "jammy",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "noble",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "plucky",
+          "status": "DNE"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "questing",
+          "status": "needs-triage"
+        },
+        {
+          "component": null,
+          "description": "",
+          "pocket": "security",
+          "release_codename": "upstream",
+          "status": "needs-triage"
+        }
+      ],
+      "ubuntu": "https://packages.ubuntu.com/search?suite=all&section=all&arch=any&searchon=sourcenames&keywords=golang-1.25"
+    }
+  ],
+  "patches": {
+    "golang": [],
+    "golang-1.10": [],
+    "golang-1.13": [],
+    "golang-1.14": [],
+    "golang-1.16": [],
+    "golang-1.17": [],
+    "golang-1.18": [],
+    "golang-1.20": [],
+    "golang-1.21": [],
+    "golang-1.22": [],
+    "golang-1.23": [],
+    "golang-1.24": [],
+    "golang-1.25": [],
+    "golang-1.6": [],
+    "golang-1.8": [],
+    "golang-1.9": []
+  },
+  "priority": "medium",
+  "published": "2025-10-29T23:16:00",
+  "references": [
+    "https://www.cve.org/CVERecord?id=CVE-2025-58188",
+    "https://groups.google.com/g/golang-announce/c/4Emdl2iQ_bI/m/qZN5nc-mBgAJ",
+    "https://github.com/golang/go/issues/75675",
+    "https://github.com/golang/go/commit/930ce220d052d632f0d84df5850c812a77b70175 (go1.25.2)",
+    "https://github.com/golang/go/commit/f9f198ab05e3282cbf6b13251d47d9141981e401 (go1.24.8)"
+  ],
+  "status": "active",
+  "tags": {},
+  "ubuntu_description": "",
+  "updated_at": "2025-11-05T10:03:03.409828+00:00"
+}
