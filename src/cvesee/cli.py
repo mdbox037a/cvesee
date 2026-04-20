@@ -1,6 +1,6 @@
 import click
 import re
-from .api import fetch_nvd_cve_data
+from .api import fetch_nvd_cve_data, fetch_ubusecapi_cve_data
 from .models import NVDInfo
 from .ui import display_cve_summary
 
@@ -29,40 +29,57 @@ def main():
 @click.option(
     "--source",
     "-s",
-    type=click.Choice(["NVD", "GHSA", "UCT"], case_sensitive=False),
+    type=click.Choice(["NVD", "GHSA", "UCT", "USAPI"], case_sensitive=False),
     default="NVD",
     help="""
         The CVE data source to query.
-        Currently supported: NVD (Nist National Vulnerability Database).
+        Currently supported: NVD (Nist National Vulnerability Database), USAPI (Ubuntu Security API).
         Planned: GHSA (GitHub Security Advisories) and UCT (Ubuntu CVE Tracker)
     """,
 )
 @click.argument("cve_id", callback=validate_cve)
 def info(source, cve_id):
     """Fetch and display details for a specific CVE ID"""
-    if source == "NVD":
-        click.echo(f"Status: Getting information about {cve_id} from {source}")
-        raw_nvd_data = fetch_nvd_cve_data(cve_id)
-        if not raw_nvd_data:
-            # something failed silently in the api call
+    wait_message = f"Status: Getting information about {cve_id} from {source}"
+    source_fail_message = (
+        f"Error: raw data from {source} not found - please try again later"
+    )
+    source_success_message = f"Status: Successfully retrieved data from {source}\n"
+    parse_fail_message = f"\nError: Failed to parse data for {cve_id}:"
+
+    match source:
+        case "NVD":
+            click.echo(wait_message)
+            raw_nvd_data = fetch_nvd_cve_data(cve_id)
+            if not raw_nvd_data:
+                # something failed silently in the api call
+                click.echo(source_fail_message)
+                return
+
+            try:
+                click.echo(source_success_message)
+                parsed_nvd_data = NVDInfo(**raw_nvd_data)
+                display_cve_summary(parsed_nvd_data, source)
+            except Exception as e:
+                click.echo(parse_fail_message)
+                click.echo(e)
+        case "USAPI":
+            click.echo(wait_message)
+            raw_ubusec_data = fetch_ubusecapi_cve_data(cve_id)
+            if not raw_ubusec_data:
+                click.echo(source_fail_message)
+                return
+
+            # TODO: bookmark April 20, 2026
+            try:
+                pass
+            except:
+                pass
+        case _:
             click.echo(
-                "Error: raw data from the NVD not found - please try again later"
+                f"Feature: supporting CVE info from {source} still in-progress - please try another source"
             )
             return
-
-        try:
-            click.echo("Status: Successfully retrieved data from NVD\n")
-            parsed_nvd_data = NVDInfo(**raw_nvd_data)
-            display_cve_summary(parsed_nvd_data, source)
-        except Exception as e:
-            click.echo(f"\nError: Failed to parse data for {cve_id}")
-            click.echo(f"Error details: {e}")
-
-    else:
-        click.echo(
-            f"Feature: supporting CVE info from {source} still in-progress - please try another source"
-        )
-        return
 
 
 if __name__ == "__main__":
