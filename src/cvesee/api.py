@@ -26,13 +26,10 @@ def fetch_nvd_cve_data(cve_id: str) -> dict | None:
 def fetch_ubusecapi_cve_data(cve_id: str) -> dict | None:
     """get CVE data from Ubuntu security API and return JSON as dictionary"""
 
-    ubusec_api_url = "https://ubuntu.com/security/cves"
-    params = {"cve_id": cve_id}
+    ubusec_api_url = f"https://ubuntu.com/security/cves/{cve_id}.json"
 
     try:
-        ubusec_data = requests.get(
-            ubusec_api_url, params=params, headers=headers, timeout=10
-        )
+        ubusec_data = requests.get(ubusec_api_url, headers=headers, timeout=10)
         ubusec_data.raise_for_status()
         return ubusec_data.json()
     except requests.RequestException as e:
