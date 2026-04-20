@@ -156,4 +156,18 @@ class UbuSecAPIInfo(BaseModel):
             "updated_packages": [],
         }
 
+        # easy wins
+        flat_data["cve_id"] = ubusec_data.get("id")
+        flat_data["ubuntu_priority"] = ubusec_data.get("priority")
+        flat_data["description"] = ubusec_data.get("description")
+        flat_data["date_published"] = ubusec_data.get("published")
+        flat_data["date_last_modified"] = ubusec_data.get("updated_at")
+        flat_data["date_accessed"] = datetime.now
+
+        # packages section
+        # nvd info section
+        # canonial_notes section
+        # notices section
+        # updated_packages section
+
         return flat_data
