@@ -23,7 +23,7 @@ def fetch_nvd_cve_data(cve_id: str) -> dict | None:
         return None
 
 
-def fetch_ubusecapi_cve_data(cve_id: str) -> dict | None:
+def fetch_usapi_cve_data(cve_id: str) -> dict | None:
     """get CVE data from Ubuntu security API and return JSON as dictionary"""
 
     ubusec_api_url = f"https://ubuntu.com/security/cves/{cve_id}.json"
