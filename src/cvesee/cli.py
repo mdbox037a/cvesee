@@ -1,7 +1,7 @@
 import click
 import re
-from .api import fetch_nvd_cve_data, fetch_ubusecapi_cve_data
-from .models import NVDInfo
+from .api import fetch_nvd_cve_data, fetch_usapi_cve_data
+from .models import NVDInfo, UbuSecAPIInfo
 from .ui import display_cve_summary
 
 
@@ -65,16 +65,19 @@ def info(source, cve_id):
                 click.echo(e)
         case "USAPI":
             click.echo(wait_message)
-            raw_ubusec_data = fetch_ubusecapi_cve_data(cve_id)
-            if not raw_ubusec_data:
+            raw_usapi_data = fetch_usapi_cve_data(cve_id)
+            if not raw_usapi_data:
                 click.echo(source_fail_message)
                 return
 
             # TODO: bookmark April 20, 2026
             try:
-                pass
-            except:
-                pass
+                click.echo(source_success_message)
+                parsed_usapi_data = UbuSecAPIInfo(raw_usapi_data)
+                display_cve_summary(parsed_usapi_data, source)
+            except Exception as e:
+                click.echo(parse_fail_message)
+                click.echo(e)
         case _:
             click.echo(
                 f"Feature: supporting CVE info from {source} still in-progress - please try another source"
