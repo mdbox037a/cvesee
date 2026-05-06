@@ -124,7 +124,7 @@ class NVDInfo(BaseModel):
         return flat_data
 
 
-class UbuSecAPIInfo(BaseModel):
+class USAPIInfo(BaseModel):
     """pydantic model to hold parsed Ubuntu security API data"""
 
     cve_id: str
@@ -134,6 +134,7 @@ class UbuSecAPIInfo(BaseModel):
     nvd_severity: Optional[str] = None
     description: str
     canonical_notes: Optional[str] = None
+    mitgation: Optional[str] = None
     date_published: datetime
     date_last_modified: datetime
     date_accessed: datetime
@@ -142,7 +143,7 @@ class UbuSecAPIInfo(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def flatten(cls, ubusec_data: dict) -> dict:
+    def flatten(cls, usapi_data: dict) -> dict:
         """select Ubuntu security api data and place in flat data structure"""
 
         flat_data = {
@@ -157,16 +158,27 @@ class UbuSecAPIInfo(BaseModel):
         }
 
         # easy wins
-        flat_data["cve_id"] = ubusec_data.get("id")
-        flat_data["ubuntu_priority"] = ubusec_data.get("priority")
-        flat_data["description"] = ubusec_data.get("description")
-        flat_data["date_published"] = ubusec_data.get("published")
-        flat_data["date_last_modified"] = ubusec_data.get("updated_at")
+        flat_data["cve_id"] = usapi_data.get("id")
+        flat_data["ubuntu_priority"] = usapi_data.get("priority")
+        flat_data["description"] = usapi_data.get("description")
+        flat_data["date_published"] = usapi_data.get("published")
+        flat_data["date_last_modified"] = usapi_data.get("updated_at")
         flat_data["date_accessed"] = datetime.now
+        flat_data["mitigation"] = usapi_data.get("mitigation")
 
         # packages section
-        # nvd info section
-        # canonial_notes section
+        # nvd info section (only supports CVSS v3 for now)
+        cvss_wrapper = usapi_data.get("impact").get("baseMetric").get("cvssV3")
+        flat_data["nvd_score"] = cvss_wrapper.get("baseScore")
+        flat_data["nvd_severity"] = cvss_wrapper.get("baseSeverity")
+
+        # canonial_notes
+        notes_raw_list = usapi_data.get("notes", [])
+        notes_only = []
+        for note in notes_raw_list:
+            notes_only.append(note["note"])
+        flat_data["canonial_notes"] = notes_only
+
         # notices section
         # updated_packages section
 
