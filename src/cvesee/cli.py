@@ -1,7 +1,7 @@
 import click
 import re
 from .api import fetch_nvd_cve_data, fetch_usapi_cve_data
-from .models import NVDInfo, UbuSecAPIInfo
+from .models import NVDInfo, USAPIInfo
 from .ui import display_cve_summary
 
 
@@ -70,10 +70,9 @@ def info(source, cve_id):
                 click.echo(source_fail_message)
                 return
 
-            # TODO: bookmark April 20, 2026
             try:
                 click.echo(source_success_message)
-                parsed_usapi_data = UbuSecAPIInfo(raw_usapi_data)
+                parsed_usapi_data = USAPIInfo(raw_usapi_data)
                 display_cve_summary(parsed_usapi_data, source)
             except Exception as e:
                 click.echo(parse_fail_message)
