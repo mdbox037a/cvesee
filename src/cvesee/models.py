@@ -138,8 +138,8 @@ class USAPIInfo(BaseModel):
     date_published: datetime
     date_last_modified: datetime
     date_accessed: datetime
-    notices: Optional[List[str]] = None
-    updated_packages: Optional[List[str]] = None
+    notices: Optional[List[dict]] = None
+    updated_packages: Optional[List[dict[dict]]] = None
 
     @model_validator(mode="before")
     @classmethod
@@ -179,7 +179,16 @@ class USAPIInfo(BaseModel):
             notes_only.append(note["note"])
         flat_data["canonial_notes"] = notes_only
 
-        # notices section
-        # updated_packages section
+        # notices and fixed packages
+        notices_list = usapi_data.get("notices", [])
+        if notices_list:
+            for notice in notices_list:
+                # notices section
+                notice_id = notice.get("id")
+                notice_date = notice.get("published")
+                flat_data["notices"].append({notice_id: notice_date})
+
+                # updated_packages section
+                # TODO: bookmark May 13, 2026
 
         return flat_data
