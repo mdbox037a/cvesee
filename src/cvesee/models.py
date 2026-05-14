@@ -213,6 +213,23 @@ class USAPIInfoOrig(BaseModel):
 
 
 # refactor workspace
+# Ubuntu Security API Data Parsing
+
+# supporting classes
+class CanonicalSecengNote(BaseModel):
+    author: Optional[str] = None
+    note: str
+
+class FixedUbuntuPackage(BaseModel):
+    name: str
+    version: str
+
+class UbuntuSecurityNotice(BaseModel):
+    id: str
+    published: datetime
+    release_packages: Dict[str, List[]]
+
+# main data structure assembly
 class USAPIInfo(BaseModel):
     """select Ubuntu security API info and place into flat data structure"""
 
@@ -241,9 +258,17 @@ class USAPIInfo(BaseModel):
         ),
     )
 
-    # TODO: bookmark May 13, 2026
+    # nested, multiple canonical_notes handling
+    canonical_notes: Optional[List[CanonicalSecengNote]] = Field(default_factory=List)
+
+    @ComputedField
+    @property
+    def get_canonical_notes(self) -> List[str]:
+        return [n.note for n in self.notes]
+
+    # TODO: bookmark May 14, 2026
     notices: Optional[List[dict]] = None
     updated_packages: Optional[dict[list[tuple]]] = None
 
     packages: Optional[dict[str, list[str]]] = None
-    canonical_notes: Optional[str] = None
+
