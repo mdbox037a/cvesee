@@ -1,7 +1,17 @@
-from pydantic import BaseModel, model_validator, HttpUrl
+from pydantic import (
+    BaseModel,
+    model_validator,
+    HttpUrl,
+    Field,
+    AliasPath,
+    AliasChoices,
+    field_validator,
+    ComputedField,
+)
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict, Tuple, Any
 from .utils import parse_cpe
+from .parameters import ubuntu_releases
 from collections import defaultdict
 
 
@@ -124,7 +134,7 @@ class NVDInfo(BaseModel):
         return flat_data
 
 
-class USAPIInfo(BaseModel):
+class USAPIInfoOrig(BaseModel):
     """pydantic model to hold parsed Ubuntu security API data"""
 
     cve_id: str
@@ -139,7 +149,7 @@ class USAPIInfo(BaseModel):
     date_last_modified: datetime
     date_accessed: datetime
     notices: Optional[List[dict]] = None
-    updated_packages: Optional[List[dict[dict]]] = None
+    updated_packages: Optional[dict[list[tuple]]] = None
 
     @model_validator(mode="before")
     @classmethod
@@ -154,7 +164,7 @@ class USAPIInfo(BaseModel):
             "date_last_modified": "",
             "date_accessed": "",
             "notices": [],
-            "updated_packages": [],
+            "updated_packages": {},
         }
 
         # easy wins
@@ -172,12 +182,12 @@ class USAPIInfo(BaseModel):
         flat_data["nvd_score"] = cvss_wrapper.get("baseScore")
         flat_data["nvd_severity"] = cvss_wrapper.get("baseSeverity")
 
-        # canonial_notes
+        # canonical_notes
         notes_raw_list = usapi_data.get("notes", [])
         notes_only = []
         for note in notes_raw_list:
             notes_only.append(note["note"])
-        flat_data["canonial_notes"] = notes_only
+        flat_data["canonical_notes"] = notes_only
 
         # notices and fixed packages
         notices_list = usapi_data.get("notices", [])
@@ -190,5 +200,50 @@ class USAPIInfo(BaseModel):
 
                 # updated_packages section
                 # TODO: bookmark May 13, 2026
+                fixes = notice.get("release_packages")
+                for release in fixes.keys():
+                    if release in ubuntu_releases:
+                        flat_data["updated_packages"].setdefault(release, {})
+                        for package in fixes[release]:
+                            flat_data["updated_packages"][release].append(
+                                (package.get("name"), package.get("version"))
+                            )
 
         return flat_data
+
+
+# refactor workspace
+class USAPIInfo(BaseModel):
+    """select Ubuntu security API info and place into flat data structure"""
+
+    # direct fields or flat aliases
+    cve_id: str = Field(validation_alias="id")
+    ubuntu_priority: Optional[str] = Field(validation_alias="priority")
+    description: str
+    mitgation: Optional[str] = None
+    date_published: datetime = Field(validation_alias="published")
+    date_last_modified: datetime = Field(validation_alias="updated_at")
+    date_accessed: datetime = Field(default_factory=datetime.now)
+
+    # nested score and severity
+    nvd_score: Optional[float] = Field(
+        None,
+        validation_alias=AliasChoices(
+            AliasPath("impact", "baseMetricV4", "cvssV4", "baseScore"),
+            AliasPath("impact", "baseMetricV3", "cvssV3", "baseScore"),
+        ),
+    )
+    nvd_severity: Optional[float] = Field(
+        None,
+        validation_alias=AliasChoices(
+            AliasPath("impact", "baseMetricV4", "cvssV4", "baseSeverity"),
+            AliasPath("impact", "baseMetricV3", "cvssV3", "baseSeverity"),
+        ),
+    )
+
+    # TODO: bookmark May 13, 2026
+    notices: Optional[List[dict]] = None
+    updated_packages: Optional[dict[list[tuple]]] = None
+
+    packages: Optional[dict[str, list[str]]] = None
+    canonical_notes: Optional[str] = None
