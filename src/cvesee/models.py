@@ -222,15 +222,17 @@ class CanonicalSecengNote(BaseModel):
     note: str
 
 
-class FixedUbuntuPackage(BaseModel):
-    name: str
-    version: str
-
-
 class UbuntuSecurityNotice(BaseModel):
+    cves_ids: Optional[List[str]] = None
+    description: Optional[str] = None
     id: str
     published: datetime
     release_packages: Dict[str, List[FixedUbuntuPackage]]
+
+
+class FixedUbuntuPackage(BaseModel):
+    name: str
+    version: str
 
 
 # main data structure assembly
@@ -273,8 +275,26 @@ class USAPIInfo(BaseModel):
     def get_canonical_notes(self) -> List[str]:
         return [n.note for n in self.raw_notes]
 
-    # TODO: bookmark May 14, 2026
-    notices: Optional[List[dict]] = None
+    # USN and fixed package handling
+    notices: Optional[List[UbuntuSecurityNotice]] = Field(default_factory=list)
+
+    @ComputedField
+    @property
+    def get_ubuntu_security_notices(self) -> (List[Dict], List[str]):
+        """return both a simple list of USN IDs and a dictionary of USNs with metatdata"""
+        usn_meta = {}
+        usn_ids = []
+        for usn in self.notices:
+            usn_ids.append(usn.id)
+            usn_meta[usn.id] = {
+                "usn_id": usn.id,
+                "related_cves": usn.cves_ids,
+                "date_published": usn.published,
+                "releases": [usn.release_packages.keys()],
+            }
+        return usn_meta, usn_ids
+
+    # TODO: bookmark May 20, 2026
     updated_packages: Optional[dict[list[tuple]]] = None
 
     packages: Optional[dict[str, list[str]]] = None
