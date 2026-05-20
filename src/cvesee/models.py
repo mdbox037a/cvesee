@@ -215,19 +215,23 @@ class USAPIInfoOrig(BaseModel):
 # refactor workspace
 # Ubuntu Security API Data Parsing
 
+
 # supporting classes
 class CanonicalSecengNote(BaseModel):
     author: Optional[str] = None
     note: str
 
+
 class FixedUbuntuPackage(BaseModel):
     name: str
     version: str
 
+
 class UbuntuSecurityNotice(BaseModel):
     id: str
     published: datetime
-    release_packages: Dict[str, List[]]
+    release_packages: Dict[str, List[FixedUbuntuPackage]]
+
 
 # main data structure assembly
 class USAPIInfo(BaseModel):
@@ -259,16 +263,18 @@ class USAPIInfo(BaseModel):
     )
 
     # nested, multiple canonical_notes handling
-    canonical_notes: Optional[List[CanonicalSecengNote]] = Field(default_factory=List)
+    raw_notes: Optional[List[CanonicalSecengNote]] = Field(
+        default_factory=list, validation_alias="notes"
+    )
 
+    # to be called later; grabs notes strings from raw_notes for output or use elsewhere
     @ComputedField
     @property
     def get_canonical_notes(self) -> List[str]:
-        return [n.note for n in self.notes]
+        return [n.note for n in self.raw_notes]
 
     # TODO: bookmark May 14, 2026
     notices: Optional[List[dict]] = None
     updated_packages: Optional[dict[list[tuple]]] = None
 
     packages: Optional[dict[str, list[str]]] = None
-
