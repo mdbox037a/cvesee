@@ -38,7 +38,7 @@ def main():
     """,
 )
 @click.argument("cve_id", callback=validate_cve)
-def info(source, cve_id):
+def summary(source, cve_id):
     """Fetch and display details for a specific CVE ID"""
     wait_message = f"Status: Getting information about {cve_id} from {source}"
     source_fail_message = (
