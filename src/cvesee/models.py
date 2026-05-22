@@ -222,9 +222,15 @@ class CanonicalSecEngNote(BaseModel):
     note: str
 
 
+class PackageStatus(BaseModel):
+    description: str
+    release_codename: str
+    status: str
+
+
 class RelatedUbuntuPackage(BaseModel):
     name: str
-    statuses: List[Dict]
+    statuses: List[PackageStatus]
     url: Field(validation_alias="ubuntu")
 
 
@@ -306,7 +312,12 @@ class USAPIInfo(BaseModel):
     @ComputedField
     @property
     def get_package_statuses(self) -> Dict[str, List[str]]:
-        pass
+        package_statuses: Dict[str, List] = {}
+        for rup in self.RelatedUbuntuPackage:
+            package_statuses[rup.statuses.status].append(
+                f"{rup.statuses.release_codename}: {rup.name} {rup.statuses.description}"
+            )
+        return package_statuses
 
     # fixed package handling
     release_packages: Optional[Dict[str, List[FixedUbuntuPackage]]] = Field(
