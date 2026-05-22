@@ -217,9 +217,20 @@ class USAPIInfoOrig(BaseModel):
 
 
 # supporting classes
-class CanonicalSecengNote(BaseModel):
+class CanonicalSecEngNote(BaseModel):
     author: Optional[str] = None
     note: str
+
+
+class RelatedUbuntuPackage(BaseModel):
+    name: str
+    statuses: List[Dict]
+    url: Field(validation_alias="ubuntu")
+
+
+class FixedUbuntuPackage(BaseModel):
+    name: str
+    version: str
 
 
 class UbuntuSecurityNotice(BaseModel):
@@ -230,11 +241,6 @@ class UbuntuSecurityNotice(BaseModel):
     release_packages: Dict[str, List[FixedUbuntuPackage]]
 
 
-class FixedUbuntuPackage(BaseModel):
-    name: str
-    version: str
-
-
 # main data structure assembly
 class USAPIInfo(BaseModel):
     """select Ubuntu security API info and place into flat data structure"""
@@ -243,7 +249,7 @@ class USAPIInfo(BaseModel):
     cve_id: str = Field(validation_alias="id")
     ubuntu_priority: Optional[str] = Field(validation_alias="priority")
     description: str
-    mitgation: Optional[str] = None
+    mitigation: Optional[str] = None
     date_published: datetime = Field(validation_alias="published")
     date_last_modified: datetime = Field(validation_alias="updated_at")
     date_accessed: datetime = Field(default_factory=datetime.now)
@@ -265,7 +271,7 @@ class USAPIInfo(BaseModel):
     )
 
     # nested, multiple canonical_notes handling
-    raw_notes: Optional[List[CanonicalSecengNote]] = Field(
+    raw_notes: Optional[List[CanonicalSecEngNote]] = Field(
         default_factory=list, validation_alias="notes"
     )
 
@@ -294,7 +300,21 @@ class USAPIInfo(BaseModel):
             }
         return usn_meta, usn_ids
 
-    # TODO: bookmark May 20, 2026
-    updated_packages: Optional[dict[list[tuple]]] = None
+    # related package handling
+    packages: Optional[List[RelatedUbuntuPackage]] = Field(default_factory=list)
 
-    packages: Optional[dict[str, list[str]]] = None
+    @ComputedField
+    @property
+    def get_package_statuses(self) -> Dict[str, List[str]]:
+        pass
+
+    # fixed package handling
+    release_packages: Optional[Dict[str, List[FixedUbuntuPackage]]] = Field(
+        default_factory=list, validation_alias=AliasPath("notices", "release_packages")
+    )
+
+    @ComputedField
+    @property
+    def get_updated_packages(self) -> List[str]:
+        """return list of package + version strings for each patched package"""
+        return [f"{p.name} {p.version}" for p in self.release_packages]
