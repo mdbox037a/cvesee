@@ -308,18 +308,19 @@ class USAPIInfo(BaseModel):
 
     @computed_field
     @property
-    def get_ubuntu_security_notices(self) -> (List[Dict], List[str]):
+    def get_ubuntu_security_notices(self) -> tuple[Dict[str, Any], List[str]]:
         """return both a simple list of USN IDs and a dictionary of USNs with metatdata"""
         usn_meta = {}
         usn_ids = []
-        for usn in self.notices:
-            usn_ids.append(usn.id)
-            usn_meta[usn.id] = {
-                "usn_id": usn.id,
-                "related_cves": usn.cves_ids,
-                "date_published": usn.published,
-                "releases": list(usn.release_packages.keys()),
-            }
+        if self.notices:
+            for usn in self.notices:
+                usn_ids.append(usn.id)
+                usn_meta[usn.id] = {
+                    "usn_id": usn.id,
+                    "related_cves": usn.cves_ids,
+                    "date_published": usn.published,
+                    "releases": list(usn.release_packages.keys()),
+                }
         return usn_meta, usn_ids
 
     @computed_field
