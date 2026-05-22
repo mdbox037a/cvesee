@@ -6,7 +6,7 @@ from pydantic import (
     AliasPath,
     AliasChoices,
     field_validator,
-    ComputedField,
+    computed_field,
 )
 from datetime import datetime
 from typing import List, Optional, Dict, Tuple, Any
@@ -213,10 +213,12 @@ class USAPIInfoOrig(BaseModel):
 
 
 # refactor workspace
-# Ubuntu Security API Data Parsing
+# --- Ubuntu Security API Data Parsing ---
 
 
-# supporting classes
+# --- Supporting Classes ---
+
+
 class CanonicalSecEngNote(BaseModel):
     author: Optional[str] = None
     note: str
@@ -231,7 +233,7 @@ class PackageStatus(BaseModel):
 class RelatedUbuntuPackage(BaseModel):
     name: str
     statuses: List[PackageStatus]
-    url: Field(validation_alias="ubuntu")
+    url: HttpUrl = Field(validation_alias="ubuntu")
 
 
 class FixedUbuntuPackage(BaseModel):
@@ -244,14 +246,17 @@ class UbuntuSecurityNotice(BaseModel):
     description: Optional[str] = None
     id: str
     published: datetime
-    release_packages: Dict[str, List[FixedUbuntuPackage]]
+    release_packages: Dict[str, List[FixedUbuntuPackage]] = Field(default_factory=dict)
 
 
-# main data structure assembly
+# --- Main Data Structure Assembly ---
+
+
 class USAPIInfo(BaseModel):
     """select Ubuntu security API info and place into flat data structure"""
 
-    # direct fields or flat aliases
+    # fields
+
     cve_id: str = Field(validation_alias="id")
     ubuntu_priority: Optional[str] = Field(validation_alias="priority")
     description: str
@@ -259,8 +264,6 @@ class USAPIInfo(BaseModel):
     date_published: datetime = Field(validation_alias="published")
     date_last_modified: datetime = Field(validation_alias="updated_at")
     date_accessed: datetime = Field(default_factory=datetime.now)
-
-    # nested score and severity
     nvd_score: Optional[float] = Field(
         None,
         validation_alias=AliasChoices(
@@ -268,29 +271,42 @@ class USAPIInfo(BaseModel):
             AliasPath("impact", "baseMetricV3", "cvssV3", "baseScore"),
         ),
     )
-    nvd_severity: Optional[float] = Field(
+    nvd_severity: Optional[str] = Field(
         None,
         validation_alias=AliasChoices(
             AliasPath("impact", "baseMetricV4", "cvssV4", "baseSeverity"),
             AliasPath("impact", "baseMetricV3", "cvssV3", "baseSeverity"),
         ),
     )
-
-    # nested, multiple canonical_notes handling
     raw_notes: Optional[List[CanonicalSecEngNote]] = Field(
         default_factory=list, validation_alias="notes"
     )
+    notices: Optional[List[UbuntuSecurityNotice]] = Field(default_factory=list)
+    packages: Optional[List[RelatedUbuntuPackage]] = Field(default_factory=list)
+    usn_packages: Optional[Dict[str, List[FixedUbuntuPackage]]] = Field(
+        default_factory=dict
+    )
 
-    # to be called later; grabs notes strings from raw_notes for output or use elsewhere
-    @ComputedField
+    # processing
+
+    @model_validator(mode="after")
+    def extract_release_packages(self) -> "USAPIInfo":
+        """get fixed packages from notices array if present"""
+        fixed_packages = {}
+        if self.notices:
+            for notice in self.notices:
+                fixed_packages.update(notice.release_packages)
+            self.usn_packages = fixed_packages
+        return self
+
+    # data-grabbing methods
+
+    @computed_field
     @property
     def get_canonical_notes(self) -> List[str]:
         return [n.note for n in self.raw_notes]
 
-    # USN and fixed package handling
-    notices: Optional[List[UbuntuSecurityNotice]] = Field(default_factory=list)
-
-    @ComputedField
+    @computed_field
     @property
     def get_ubuntu_security_notices(self) -> (List[Dict], List[str]):
         """return both a simple list of USN IDs and a dictionary of USNs with metatdata"""
@@ -302,30 +318,32 @@ class USAPIInfo(BaseModel):
                 "usn_id": usn.id,
                 "related_cves": usn.cves_ids,
                 "date_published": usn.published,
-                "releases": [usn.release_packages.keys()],
+                "releases": list(usn.release_packages.keys()),
             }
         return usn_meta, usn_ids
 
-    # related package handling
-    packages: Optional[List[RelatedUbuntuPackage]] = Field(default_factory=list)
-
-    @ComputedField
+    @computed_field
     @property
     def get_package_statuses(self) -> Dict[str, List[str]]:
-        package_statuses: Dict[str, List] = {}
-        for rup in self.RelatedUbuntuPackage:
-            package_statuses[rup.statuses.status].append(
-                f"{rup.statuses.release_codename}: {rup.name} {rup.statuses.description}"
+        package_statuses = defaultdict(list)
+        flat_pkg_data = (
+            (
+                pkg_info.status,
+                f"{pkg_info.release_codename}: {pkg.name} {pkg_info.description}".strip(),
             )
+            for pkg in self.packages
+            for pkg_info in pkg.statuses
+        )
+        for status, status_string in flat_pkg_data:
+            package_statuses[status].append(status_string)
         return package_statuses
 
-    # fixed package handling
-    release_packages: Optional[Dict[str, List[FixedUbuntuPackage]]] = Field(
-        default_factory=list, validation_alias=AliasPath("notices", "release_packages")
-    )
-
-    @ComputedField
+    @computed_field
     @property
     def get_updated_packages(self) -> List[str]:
         """return list of package + version strings for each patched package"""
-        return [f"{p.name} {p.version}" for p in self.release_packages]
+        return [
+            f"{release}: {pkg.name} {pkg.version}"
+            for release, pkgs in self.usn_packages.items()
+            for pkg in pkgs
+        ]
