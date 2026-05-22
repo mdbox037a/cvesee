@@ -73,7 +73,8 @@ def summary(source, cve_id):
             try:
                 click.echo(source_success_message)
                 parsed_usapi_data = USAPIInfo(**raw_usapi_data)
-                display_cve_summary(parsed_usapi_data, source)
+                # display_cve_summary(parsed_usapi_data, source)
+                print(parsed_usapi_data.model_dump_json())
             except Exception as e:
                 click.echo(parse_fail_message)
                 click.echo(e)
