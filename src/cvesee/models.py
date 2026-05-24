@@ -8,11 +8,18 @@ from pydantic import (
     field_validator,
     computed_field,
 )
-from datetime import datetime
+from pydantic.functional_validators import BeforeValidator
+
+from datetime import datetime, UTC
+from collections import defaultdict
 from typing import List, Optional, Dict, Tuple, Any
+from typing_extensions import Annotated
+
 from .utils import parse_cpe
 from .parameters import ubuntu_releases
-from collections import defaultdict
+
+# custom type annotation for strings that come from source with newlines and crs
+CleanString = Annotated[str, BeforeValidator(lambda s: " ".join(s.split()))]
 
 
 class NVDInfo(BaseModel):
@@ -135,16 +142,16 @@ class NVDInfo(BaseModel):
 
 
 # --- Ubuntu Security API Data Parsing ---
-# --- Supporting Classes ---
+# Supporting Classes
 
 
 class CanonicalSecEngNote(BaseModel):
     author: Optional[str] = None
-    note: str
+    note: CleanString
 
 
 class PackageStatus(BaseModel):
-    description: str
+    description: CleanString
     release_codename: str
     status: str
 
@@ -162,13 +169,13 @@ class FixedUbuntuPackage(BaseModel):
 
 class UbuntuSecurityNotice(BaseModel):
     cves_ids: Optional[List[str]] = None
-    description: Optional[str] = None
+    description: Optional[CleanString] = None
     id: str
     published: datetime
     release_packages: Dict[str, List[FixedUbuntuPackage]] = Field(default_factory=dict)
 
 
-# --- Main Data Structure Assembly ---
+# Main Data Structure Assembly
 
 
 class USAPIInfo(BaseModel):
@@ -178,11 +185,11 @@ class USAPIInfo(BaseModel):
 
     cve_id: str = Field(validation_alias="id")
     ubuntu_priority: Optional[str] = Field(validation_alias="priority")
-    description: str
-    mitigation: Optional[str] = None
+    description: CleanString
+    mitigation: Optional[CleanString] = None
     date_published: datetime = Field(validation_alias="published")
     date_last_modified: datetime = Field(validation_alias="updated_at")
-    date_accessed: datetime = Field(default_factory=datetime.now)
+    date_accessed: datetime = Field(default_factory=lambda: datetime.now(UTC))
     nvd_score: Optional[float] = Field(
         None,
         validation_alias=AliasChoices(
@@ -223,7 +230,7 @@ class USAPIInfo(BaseModel):
     @computed_field
     @property
     def get_canonical_notes(self) -> List[str]:
-        return [n.note for n in self.raw_notes]
+        return [n.note.replace("\n", " ") for n in self.raw_notes]
 
     @computed_field
     @property
