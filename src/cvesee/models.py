@@ -22,6 +22,7 @@ from .parameters import ubuntu_releases
 CleanString = Annotated[str, BeforeValidator(lambda s: " ".join(s.split()))]
 
 
+# TODO: this is a mess - a huge basmodel -> need to come back to define more pydantic-native structure
 class NVDInfo(BaseModel):
     """pydantic model to parse selected NVD CVE API data"""
 
